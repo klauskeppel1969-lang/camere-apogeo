@@ -1,304 +1,326 @@
+# Nuovo `index.html` – Camere Apogeo
+
+```html
 <!DOCTYPE html>
 <html lang="it">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Camere Apogeo</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<link rel="apple-touch-icon" href="icon-192.png">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Camere Apogeo">
-<meta name="theme-color" content="#ffffff">
-<title>Camere – Hotel Apogeo</title>
+
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f5f5f0;
-  min-height: 100vh;
-  padding-bottom: 160px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f0f0f0;
+  padding-bottom: 120px;
 }
 
 header {
-  background: #fff;
-  border-bottom: 1px solid #e0ddd6;
-  padding: 12px 16px 10px;
+  background: #111;
+  color: white;
+  padding: 18px;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
+  text-align: center;
+  border-bottom: 4px solid #d4af37;
 }
 
-header h1 { font-size: 17px; font-weight: 600; color: #1a1a1a; letter-spacing: -0.2px; }
-
-.sync-indicator {
-  font-size: 11px; color: #888; margin-top: 2px;
-  display: flex; align-items: center; gap: 5px;
+header h1 {
+  font-size: 28px;
+  font-weight: 900;
 }
 
-.sync-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #ccc; display: inline-block; transition: background 0.3s;
+.sync {
+  margin-top: 6px;
+  font-size: 14px;
 }
-.sync-dot.online  { background: #3B6D11; }
-.sync-dot.syncing { background: #BA7517; }
-.sync-dot.error   { background: #A32D2D; }
-
-.legend {
-  background: #fff;
-  border-bottom: 1px solid #e0ddd6;
-  padding: 10px 16px;
-  display: flex; flex-wrap: wrap; gap: 8px 14px;
-}
-
-.leg { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #555; }
-.leg-box { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  padding: 12px;
-  max-width: 480px;
-  margin: 0 auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 14px;
+  max-width: 700px;
+  margin: auto;
 }
 
 .room {
   aspect-ratio: 1;
-  border-radius: 8px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  cursor: pointer;
-  border: 6px solid transparent;
-  outline: 6px solid transparent;
-  outline-offset: 0px;
-  transition: transform 0.12s;
-  user-select: none;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-}
-
-.room:active { transform: scale(0.88); }
-
-.room-num  { font-size: 13px; font-weight: 700; line-height: 1; }
-.room-tag  { font-size: 8px; font-weight: 500; margin-top: 3px; letter-spacing: 0.2px; text-transform: uppercase; }
-
-.s-occupied { background: #F7C1C1; }
-.s-free     { background: #C0DD97; }
-.s-clean    { background: #B5D4F4; }
-.s-ready    { background: #D3D1C7; }
-
-.s-occupied .room-num, .s-occupied .room-tag { color: #791F1F; }
-.s-free .room-num,     .s-free .room-tag     { color: #27500A; }
-.s-clean .room-num,    .s-clean .room-tag    { color: #0C447C; }
-.s-ready .room-num,    .s-ready .room-tag    { color: #444441; }
-
-.dnd    { border-color: #6D4C1F; }
-.urgent { outline-color: #D4A000; }
-
-.urgent::after {
-  content: '!';
-  position: absolute;
-  top: 2px; right: 4px;
-  font-size: 10px; font-weight: 800;
-  color: #7A5800;
-  line-height: 1;
-}
-
-.notes-section {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 0 12px 16px;
-}
-
-.notes-label {
-  font-size: 12px; font-weight: 600;
-  color: #666; margin-bottom: 6px;
-}
-
-.notes-box {
-  width: 100%;
-  min-height: 90px;
-  padding: 12px;
-  border: 1.5px solid #ddd;
-  border-radius: 10px;
-  font-size: 14px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #1a1a1a;
-  background: #fff;
-  resize: vertical;
-  outline: none;
-  line-height: 1.5;
-}
-.notes-box:focus { border-color: #6D4C1F; }
-
-.notes-footer {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-top: 6px;
-}
-.notes-status { font-size: 11px; color: #aaa; }
-.notes-save {
-  padding: 7px 18px;
-  background: #1a1a1a; color: #fff;
-  border: none; border-radius: 8px;
-  font-size: 13px; font-weight: 600;
   cursor: pointer;
+  border: 8px solid transparent;
+  transition: transform 0.1s;
+  user-select: none;
 }
-.notes-save:active { opacity: 0.7; }
+
+.room:active {
+  transform: scale(0.92);
+}
+
+.room-number {
+  font-size: 38px;
+  font-weight: 900;
+}
+
+.state-inactive {
+  background: #bdbdbd;
+  color: #333;
+}
+
+.state-todo {
+  background: #f8c7d2;
+  color: #791f1f;
+}
+
+.state-ready {
+  background: #bfe8b8;
+  color: #1d5c1d;
+}
+
+.priority {
+  border: 10px solid #ff1f1f;
+}
+
+.stay {
+  border: 10px solid #6b3e12;
+}
+
+.dnd::after {
+  content: '🚫';
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 34px;
+}
+
+.night::before {
+  content: '⭐';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 26px;
+}
+
+.legend {
+  background: white;
+  padding: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  border-bottom: 2px solid #ddd;
+}
+
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.box {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+
+.notes {
+  max-width: 700px;
+  margin: auto;
+  padding: 14px;
+}
+
+.notes textarea {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 12px;
+  border: 3px solid #ccc;
+  padding: 12px;
+  font-size: 18px;
+}
 
 .stats {
-  background: #fff;
-  border-top: 1px solid #e0ddd6;
   position: fixed;
-  bottom: 0; left: 0; right: 0;
-  padding: 8px 16px 10px;
-  display: flex; flex-wrap: wrap; gap: 5px 10px;
-  z-index: 10;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 3px solid #ccc;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-weight: bold;
 }
 
-.stat { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #555; }
-.stat-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-.stat strong { color: #1a1a1a; font-weight: 600; }
-
-.modal-overlay {
+.modal-bg {
   display: none;
-  position: fixed; inset: 0;
+  position: fixed;
+  inset: 0;
   background: rgba(0,0,0,0.5);
-  z-index: 100; align-items: flex-end; justify-content: center;
+  z-index: 200;
+  align-items: flex-end;
 }
-.modal-overlay.open { display: flex; }
+
+.modal-bg.open {
+  display: flex;
+}
 
 .modal {
-  background: #fff;
-  border-radius: 16px 16px 0 0;
-  width: 100%; max-width: 480px;
-  padding: 16px 16px 36px;
+  background: white;
+  width: 100%;
+  max-width: 700px;
+  margin: auto;
+  border-radius: 20px 20px 0 0;
+  padding: 18px;
 }
 
-.modal-handle { width: 36px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 14px; }
-.modal-title  { font-size: 18px; font-weight: 700; color: #1a1a1a; text-align: center; margin-bottom: 14px; }
-
-.modal-options {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;
+.modal h2 {
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: 28px;
 }
 
-.opt-btn {
-  padding: 13px 8px; border-radius: 10px;
-  border: 5px solid transparent;
-  cursor: pointer; text-align: center;
-  font-size: 13px; font-weight: 600;
-  transition: transform 0.1s;
+.btn-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
-.opt-btn:active { transform: scale(0.94); }
-.opt-occupied { background: #F7C1C1; color: #791F1F; }
-.opt-free     { background: #C0DD97; color: #27500A; }
-.opt-clean    { background: #B5D4F4; color: #0C447C; }
-.opt-ready    { background: #D3D1C7; color: #444441; }
-.opt-btn.selected { border-color: #333; }
 
-.toggle-row {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: 10px;
-  margin-bottom: 8px;
+.btn {
+  padding: 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 900;
   cursor: pointer;
-  border: 5px solid transparent;
 }
-.toggle-row.sosta-row            { background: #faf8f4; }
-.toggle-row.sosta-row.selected   { border-color: #6D4C1F; background: #F5E6D3; }
-.toggle-row.urgent-row           { background: #fffbea; }
-.toggle-row.urgent-row.selected  { border-color: #D4A000; background: #FFF3C0; }
 
-.row-label { font-size: 14px; font-weight: 600; }
-.row-desc  { font-size: 12px; margin-top: 2px; }
-.sosta-row .row-label, .sosta-row .row-desc   { color: #4a3010; }
-.urgent-row .row-label, .urgent-row .row-desc { color: #5c4200; }
+.btn-gray {
+  background: #bdbdbd;
+}
 
-.toggle-switch {
-  width: 44px; height: 26px; background: #ddd;
-  border-radius: 13px; position: relative;
-  transition: background 0.2s; flex-shrink: 0;
+.btn-pink {
+  background: #f8c7d2;
 }
-.toggle-switch::after {
-  content: ''; position: absolute;
-  width: 20px; height: 20px; background: #fff;
-  border-radius: 50%; top: 3px; left: 3px;
-  transition: left 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-}
-.toggle-switch.on-sosta  { background: #6D4C1F; }
-.toggle-switch.on-urgent { background: #D4A000; }
-.toggle-switch.on-sosta::after, .toggle-switch.on-urgent::after { left: 21px; }
 
-.modal-confirm {
-  width: 100%; padding: 15px;
-  background: #1a1a1a; color: #fff;
-  border: none; border-radius: 12px;
-  font-size: 16px; font-weight: 600;
-  cursor: pointer; margin-top: 4px;
+.btn-green {
+  background: #bfe8b8;
 }
-.modal-confirm:active { opacity: 0.8; }
+
+.toggle {
+  margin-top: 10px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f5f5f5;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.toggle.active-red {
+  border: 6px solid red;
+}
+
+.toggle.active-brown {
+  border: 6px solid #6b3e12;
+}
+
+.toggle.active-dark {
+  border: 6px solid #222;
+}
+
+.toggle.active-star {
+  border: 6px solid #d60000;
+}
+
+.save {
+  width: 100%;
+  margin-top: 16px;
+  padding: 18px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Hotel Apogeo — Camere</h1>
-  <div class="sync-indicator">
-    <span class="sync-dot" id="syncDot"></span>
-    <span id="syncLabel">Connessione...</span>
-  </div>
+  <h1>Hotel Apogeo</h1>
+  <div class="sync" id="sync">Connessione...</div>
 </header>
 
 <div class="legend">
-  <div class="leg"><div class="leg-box" style="background:#F7C1C1;border:2.5px solid #E24B4A"></div>Occupata</div>
-  <div class="leg"><div class="leg-box" style="background:#C0DD97;border:2.5px solid #639922"></div>Da riassettare</div>
-  <div class="leg"><div class="leg-box" style="background:#B5D4F4;border:2.5px solid #378ADD"></div>Riassettata</div>
-  <div class="leg"><div class="leg-box" style="background:#D3D1C7;border:2.5px solid #888"></div>Pronta/libera</div>
-  <div class="leg"><div class="leg-box" style="background:#C0DD97;border:2.5px solid #6D4C1F"></div>In sosta</div>
-  <div class="leg"><div class="leg-box" style="background:#F7C1C1;border:2.5px solid #6D4C1F;outline:5px solid #D4A000;outline-offset:-2px"></div>! Urgente</div>
+  <div class="leg"><div class="box" style="background:#bdbdbd"></div> Non usata / rifatta</div>
+  <div class="leg"><div class="box" style="background:#f8c7d2"></div> Da rifare</div>
+  <div class="leg"><div class="box" style="background:#bfe8b8"></div> Libera e accessibile</div>
+  <div class="leg"><div class="box" style="border:6px solid red"></div> Priorità</div>
+  <div class="leg"><div class="box" style="border:6px solid #6b3e12"></div> Sosta</div>
+  <div class="leg">🚫 DND</div>
+  <div class="leg">⭐ Night worker</div>
 </div>
 
 <div class="grid" id="grid"></div>
 
-<div class="notes-section">
-  <div class="notes-label">📋 Note del giorno</div>
-  <textarea class="notes-box" id="notesBox" placeholder="Comunicazioni per le cameriere..."></textarea>
-  <div class="notes-footer">
-    <span class="notes-status" id="notesStatus"></span>
-    <button class="notes-save" id="notesSave">Salva nota</button>
-  </div>
+<div class="notes">
+  <textarea id="notes" placeholder="Note del giorno..."></textarea>
 </div>
 
 <div class="stats" id="stats"></div>
 
-<div class="modal-overlay" id="modalOverlay">
+<div class="modal-bg" id="modalBg">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="modalTitle">Camera</div>
-    <div class="modal-options">
-      <button class="opt-btn opt-occupied" data-state="occupied">🔴 Occupata</button>
-      <button class="opt-btn opt-free"     data-state="free">🟢 Da riassettare</button>
-      <button class="opt-btn opt-clean"    data-state="clean">🔵 Riassettata</button>
-      <button class="opt-btn opt-ready"    data-state="ready">⚪ Pronta / libera</button>
+
+    <h2 id="modalTitle">Camera</h2>
+
+    <div class="btn-grid">
+      <button class="btn btn-gray" data-state="inactive">⚪ Non usata / rifatta</button>
+      <button class="btn btn-pink" data-state="todo">🌸 Da rifare</button>
+      <button class="btn btn-green" data-state="ready">🟢 Libera / accessibile</button>
     </div>
-    <div class="toggle-row sosta-row" id="sostaRow">
-      <div>
-        <div class="row-label">🟫 In sosta</div>
-        <div class="row-desc">Il cliente rimane più giorni</div>
-      </div>
-      <div class="toggle-switch" id="sostaToggle"></div>
-    </div>
-    <div class="toggle-row urgent-row" id="urgentRow">
-      <div>
-        <div class="row-label">⚡ Urgente / priorità</div>
-        <div class="row-desc">Da fare subito, prima delle altre</div>
-      </div>
-      <div class="toggle-switch" id="urgentToggle"></div>
-    </div>
-    <button class="modal-confirm" id="modalConfirm">Conferma</button>
+
+    <div class="toggle" id="priorityToggle">🔴 Priorità</div>
+    <div class="toggle" id="stayToggle">🟫 Camera in sosta</div>
+    <div class="toggle" id="dndToggle">🚫 Non disturbare</div>
+    <div class="toggle" id="nightToggle">⭐ Lavoratore notturno</div>
+
+    <button class="save" id="saveBtn">SALVA</button>
+
   </div>
 </div>
 
 <script type="module">
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
@@ -312,141 +334,202 @@ const firebaseConfig = {
   appId: "1:1029900577269:web:2fc8cf88fb9fa9703918bc"
 };
 
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 const ROOMS = [
-  '130','14','15','16','18','20','21','22','23','24','25','26',
-  '28a','28b','29','30','31','32','33','34','35','36','37','38',
-  '39','40','41a','41b','42','43','44','45','46','47','48'
+'130','14','15','16','18','20','21','22','23','24','25','26',
+'28a','28b','29','30','31','32','33','34','35','36','37','38',
+'39','40','41a','41b','42','43','44','45','46','47','48'
 ];
 
-const STATE_LABELS = {
-  occupied: 'Occupata',
-  free:     'Riassettare',
-  clean:    'Riassettata',
-  ready:    'Pronta'
+let data = {};
+let currentRoom = null;
+
+let temp = {
+  state: 'inactive',
+  priority: false,
+  stay: false,
+  dnd: false,
+  night: false
 };
 
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
-
-let roomData = {};
-let editingRoom = null;
-let pendingState = null;
-let pendingSosta = false;
-let pendingUrgent = false;
-
-function setSyncState(state, label) {
-  document.getElementById('syncDot').className = 'sync-dot ' + state;
-  document.getElementById('syncLabel').textContent = label;
-}
-
-setSyncState('syncing', 'Connessione...');
-
 onValue(ref(db, 'camere'), (snap) => {
-  roomData = snap.val() || {};
-  ROOMS.forEach(n => { if (!roomData[n]) roomData[n] = { state: 'occupied', sosta: false, urgent: false }; });
-  renderGrid();
-  renderStats();
-  setSyncState('online', 'Sincronizzato');
-}, () => setSyncState('error', 'Errore connessione'));
+  data = snap.val() || {};
 
-onValue(ref(db, 'note'), (snap) => {
-  const box = document.getElementById('notesBox');
-  if (document.activeElement !== box) box.value = snap.val() || '';
+  ROOMS.forEach(r => {
+    if(!data[r]) {
+      data[r] = {
+        state: 'inactive',
+        priority: false,
+        stay: false,
+        dnd: false,
+        night: false
+      };
+    }
+  });
+
+  render();
+  renderStats();
+
+  document.getElementById('sync').innerText = '🟢 Sincronizzato';
 });
 
-function renderGrid() {
+function render() {
+
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  ROOMS.forEach(n => {
-    const d = roomData[n] || { state: 'occupied', sosta: false, urgent: false };
+
+  ROOMS.forEach(room => {
+
+    const d = data[room];
+
     const div = document.createElement('div');
-    let cls = 'room s-' + d.state;
-    if (d.sosta)  cls += ' dnd';
-    if (d.urgent) cls += ' urgent';
-    div.className = cls;
-    div.setAttribute('role', 'button');
-    div.setAttribute('aria-label', 'Camera ' + n);
-    div.innerHTML = '<span class="room-num">' + n + '</span><span class="room-tag">' + STATE_LABELS[d.state] + '</span>';
-    div.addEventListener('click', () => openModal(n));
+
+    div.className = 'room state-' + d.state;
+
+    if(d.priority) div.classList.add('priority');
+    if(d.stay) div.classList.add('stay');
+    if(d.dnd) div.classList.add('dnd');
+    if(d.night) div.classList.add('night');
+
+    div.innerHTML = '<div class="room-number">' + room + '</div>';
+
+    div.onclick = () => openModal(room);
+
     grid.appendChild(div);
+
   });
 }
 
 function renderStats() {
-  const counts = { occupied:0, free:0, clean:0, ready:0 };
-  let sosta = 0, urgent = 0;
-  ROOMS.forEach(n => {
-    const d = roomData[n] || { state:'occupied', sosta:false, urgent:false };
-    counts[d.state]++;
-    if (d.sosta)  sosta++;
-    if (d.urgent) urgent++;
+
+  let todo = 0;
+  let ready = 0;
+  let stay = 0;
+  let priority = 0;
+
+  ROOMS.forEach(r => {
+    const d = data[r];
+
+    if(d.state === 'todo') todo++;
+    if(d.state === 'ready') ready++;
+    if(d.stay) stay++;
+    if(d.priority) priority++;
   });
-  const colors = { occupied:'#E24B4A', free:'#639922', clean:'#378ADD', ready:'#888' };
-  const labels = { occupied:'Occupate', free:'Riassettare', clean:'Riassettate', ready:'Pronte' };
-  let html = '';
-  Object.keys(counts).forEach(s => {
-    html += '<div class="stat"><div class="stat-dot" style="background:' + colors[s] + '"></div>' + labels[s] + ': <strong>' + counts[s] + '</strong></div>';
-  });
-  if (sosta)  html += '<div class="stat"><div class="stat-dot" style="background:#6D4C1F;border-radius:50%"></div>Sosta: <strong>' + sosta + '</strong></div>';
-  if (urgent) html += '<div class="stat"><div class="stat-dot" style="background:#D4A000;border-radius:50%"></div>Urgenti: <strong>' + urgent + '</strong></div>';
-  document.getElementById('stats').innerHTML = html;
+
+  document.getElementById('stats').innerHTML = `
+    🌸 Da rifare: ${todo}
+    🟢 Libere: ${ready}
+    🟫 Sosta: ${stay}
+    🔴 Priorità: ${priority}
+  `;
 }
 
-function openModal(n) {
-  editingRoom = n;
-  const d = roomData[n] || { state:'occupied', sosta:false, urgent:false };
-  pendingState  = d.state;
-  pendingSosta  = d.sosta  || false;
-  pendingUrgent = d.urgent || false;
-  document.getElementById('modalTitle').textContent = 'Camera ' + n;
-  updateModalUI();
-  document.getElementById('modalOverlay').classList.add('open');
+function openModal(room) {
+
+  currentRoom = room;
+
+  temp = {...data[room]};
+
+  document.getElementById('modalTitle').innerText = 'Camera ' + room;
+
+  updateToggleUI();
+
+  document.getElementById('modalBg').classList.add('open');
 }
 
-function updateModalUI() {
-  document.querySelectorAll('.opt-btn').forEach(b => b.classList.toggle('selected', b.dataset.state === pendingState));
-  const sostaRow = document.getElementById('sostaRow');
-  const sostaToggle = document.getElementById('sostaToggle');
-  sostaRow.classList.toggle('selected', pendingSosta);
-  sostaToggle.className = 'toggle-switch' + (pendingSosta ? ' on-sosta' : '');
-  const urgentRow = document.getElementById('urgentRow');
-  const urgentToggle = document.getElementById('urgentToggle');
-  urgentRow.classList.toggle('selected', pendingUrgent);
-  urgentToggle.className = 'toggle-switch' + (pendingUrgent ? ' on-urgent' : '');
+function updateToggleUI() {
+
+  document.getElementById('priorityToggle').classList.toggle('active-red', temp.priority);
+  document.getElementById('stayToggle').classList.toggle('active-brown', temp.stay);
+  document.getElementById('dndToggle').classList.toggle('active-dark', temp.dnd);
+  document.getElementById('nightToggle').classList.toggle('active-star', temp.night);
 }
 
-document.querySelectorAll('.opt-btn').forEach(b => {
-  b.addEventListener('click', () => { pendingState = b.dataset.state; updateModalUI(); });
+
+document.querySelectorAll('[data-state]').forEach(btn => {
+
+  btn.onclick = () => {
+    temp.state = btn.dataset.state;
+  };
+
 });
-document.getElementById('sostaRow').addEventListener('click', () => { pendingSosta = !pendingSosta; updateModalUI(); });
-document.getElementById('urgentRow').addEventListener('click', () => { pendingUrgent = !pendingUrgent; updateModalUI(); });
 
-document.getElementById('modalConfirm').addEventListener('click', () => {
-  if (!editingRoom) return;
-  const newData = { state: pendingState, sosta: pendingSosta, urgent: pendingUrgent };
-  roomData[editingRoom] = newData;
-  set(ref(db, 'camere/' + editingRoom), newData);
-  setSyncState('syncing', 'Salvataggio...');
-  renderGrid();
+
+document.getElementById('priorityToggle').onclick = () => {
+  temp.priority = !temp.priority;
+  updateToggleUI();
+};
+
+
+document.getElementById('stayToggle').onclick = () => {
+  temp.stay = !temp.stay;
+  updateToggleUI();
+};
+
+
+document.getElementById('dndToggle').onclick = () => {
+  temp.dnd = !temp.dnd;
+  updateToggleUI();
+};
+
+
+document.getElementById('nightToggle').onclick = () => {
+  temp.night = !temp.night;
+  updateToggleUI();
+};
+
+
+document.getElementById('saveBtn').onclick = () => {
+
+  data[currentRoom] = temp;
+
+  set(ref(db, 'camere/' + currentRoom), temp);
+
+  render();
   renderStats();
-  document.getElementById('modalOverlay').classList.remove('open');
+
+  document.getElementById('modalBg').classList.remove('open');
+
+};
+
+
+document.getElementById('modalBg').onclick = (e) => {
+
+  if(e.target.id === 'modalBg') {
+    document.getElementById('modalBg').classList.remove('open');
+  }
+
+};
+
+
+onValue(ref(db, 'note'), (snap) => {
+  document.getElementById('notes').value = snap.val() || '';
 });
 
-document.getElementById('modalOverlay').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('modalOverlay'))
-    document.getElementById('modalOverlay').classList.remove('open');
+
+document.getElementById('notes').addEventListener('change', () => {
+
+  set(ref(db, 'note'), document.getElementById('notes').value);
+
 });
 
-document.getElementById('notesSave').addEventListener('click', () => {
-  const nota = document.getElementById('notesBox').value;
-  set(ref(db, 'note'), nota);
-  document.getElementById('notesStatus').textContent = 'Salvato ✓';
-  setTimeout(() => document.getElementById('notesStatus').textContent = '', 2500);
-});
 
-document.getElementById('notesBox').addEventListener('input', () => {
-  document.getElementById('notesStatus').textContent = 'Non salvato';
-});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js');
+}
+
 </script>
+
 </body>
 </html>
+```
+
+## File aggiuntivi da mantenere nel repository
+
+* `manifest.json`
+* `service-worker.js`
+* `icon-192.png`
+* `icon-512.png`
+* `index.html`
