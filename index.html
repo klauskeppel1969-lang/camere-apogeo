@@ -1,155 +1,679 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Camere Apogeo</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Camere Apogeo">
+
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: Arial, sans-serif; background: #f4f4f4; padding-bottom: 50px; }
-  
-  header { background: #111; color: white; padding: 15px; text-align: center; border-bottom: 4px solid #d4af37; }
-  
-  /* Sezione Gestione Note */
-  .reception-notes { max-width: 700px; margin: 15px auto; padding: 15px; background: white; border-radius: 12px; border: 2px solid #ddd; }
-  .reception-notes h3 { margin-bottom: 10px; font-size: 16px; text-transform: uppercase; }
-  #noteArea { width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; resize: none; margin-bottom: 10px; }
-  .note-controls { display: flex; gap: 10px; }
-  .btn-reset-note { flex: 1; background: #ff4444; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-  .btn-save-note { flex: 2; background: #111; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-  /* Griglia Camere */
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; max-width: 700px; margin: auto; }
-  .room { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; font-weight: 900; font-size: 24px; cursor: pointer; border: 6px solid transparent; }
-  .state-inactive { background: #bdbdbd; color: #333; }
-  .state-todo { background: #f8c7d2; color: #791f1f; }
-  .state-ready { background: #bfe8b8; color: #1d5c1d; }
-  .priority { border-color: red; }
-  .stay { border-color: #6b3e12; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
 
-  /* Pulsante Reset Totale */
-  .admin-actions { max-width: 700px; margin: 10px auto; padding: 0 15px; }
-  .btn-reset-all { width: 100%; background: #000; color: #ff4444; border: 2px solid #ff4444; padding: 15px; border-radius: 12px; font-weight: 900; font-size: 16px; cursor: pointer; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f0f0f0;
+  padding-bottom: 120px;
+}
 
-  /* Modal */
-  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
-  .modal-bg.open { display: flex; }
-  .modal { background: white; width: 85%; max-width: 350px; border-radius: 15px; padding: 20px; }
-  .modal button { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 8px; font-weight: bold; }
-  .toggle-btn { background: #eee; border: 1px solid #ccc !important; }
-  .toggle-btn.active { background: #333; color: white; }
+header {
+  background: #111;
+  color: white;
+  padding: 12px 18px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 4px solid #d4af37;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.header-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.header-title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.header-logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  border-left: 1px solid #333;
+  padding-left: 14px;
+}
+
+.header-logo {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.7));
+}
+
+.header-logo-caption {
+  font-size: 8px;
+  color: #d4af37;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.sync {
+  font-size: 12px;
+  color: #888;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 14px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.room {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  border: 8px solid transparent;
+  transition: transform 0.1s;
+  user-select: none;
+}
+
+.room:active {
+  transform: scale(0.92);
+}
+
+.room-number {
+  font-size: 38px;
+  font-weight: 900;
+}
+
+.state-inactive {
+  background: #bdbdbd;
+  color: #333;
+}
+
+.state-todo {
+  background: #f8c7d2;
+  color: #791f1f;
+}
+
+.state-ready {
+  background: #bfe8b8;
+  color: #1d5c1d;
+}
+
+.priority {
+  border: 10px solid #ff1f1f;
+}
+
+.stay {
+  border: 10px solid #6b3e12;
+}
+
+.dnd::after {
+  content: '🚫';
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 34px;
+}
+
+.night::before {
+  content: '⭐';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 26px;
+}
+
+.legend {
+  background: white;
+  padding: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  border-bottom: 2px solid #ddd;
+}
+
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.box {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+
+/* ── CHAT ── */
+
+.chat-section {
+  max-width: 700px;
+  margin: 14px auto 0;
+  padding: 0 14px;
+}
+
+.chat-section h3 {
+  font-size: 16px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  color: #333;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.chat-sender-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chat-sender-row label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+}
+
+.chat-sender-select {
+  flex: 1;
+  min-width: 140px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  font-size: 16px;
+  background: white;
+}
+
+.chat-messages {
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid #ddd;
+  padding: 12px;
+  min-height: 160px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.chat-empty {
+  color: #aaa;
+  font-size: 15px;
+  text-align: center;
+  margin: auto;
+}
+
+.bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.4;
+  position: relative;
+}
+
+.bubble.from-reception {
+  background: #111;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.bubble.from-cleaning {
+  background: #bfe8b8;
+  color: #1d5c1d;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.bubble.from-other {
+  background: #f8c7d2;
+  color: #791f1f;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.bubble-meta {
+  font-size: 11px;
+  opacity: 0.65;
+  margin-top: 4px;
+  display: block;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 3px solid #ccc;
+  font-size: 16px;
+  resize: none;
+  min-height: 50px;
+  max-height: 120px;
+}
+
+.chat-send-btn {
+  padding: 12px 18px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 22px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.chat-send-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── STATS ── */
+
+.stats {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 3px solid #ccc;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-weight: bold;
+}
+
+/* ── MODAL ── */
+
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  align-items: flex-end;
+}
+
+.modal-bg.open {
+  display: flex;
+}
+
+.modal {
+  background: white;
+  width: 100%;
+  max-width: 700px;
+  margin: auto;
+  border-radius: 20px 20px 0 0;
+  padding: 18px;
+}
+
+.modal h2 {
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: 28px;
+}
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.btn {
+  padding: 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.btn-gray  { background: #bdbdbd; }
+.btn-pink  { background: #f8c7d2; }
+.btn-green { background: #bfe8b8; }
+
+.toggle {
+  margin-top: 10px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f5f5f5;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.toggle.active-red   { border: 6px solid red; }
+.toggle.active-brown { border: 6px solid #6b3e12; }
+.toggle.active-dark  { border: 6px solid #222; }
+.toggle.active-star  { border: 6px solid #d60000; }
+
+.save {
+  width: 100%;
+  margin-top: 16px;
+  padding: 18px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
 </style>
 </head>
 <body>
 
-<header><h1>Camere Apogeo</h1></header>
-
-<div class="reception-notes">
-  <h3>📝 Note Reception</h3>
-  <textarea id="noteArea" placeholder="Inserisci note per il turno..."></textarea>
-  <div class="note-controls">
-    <button class="btn-reset-note" id="resetNoteBtn">RESET NOTE</button>
-    <button class="btn-save-note" id="saveNoteBtn">SALVA NOTE</button>
+<header>
+  <div class="header-main">
+    <div class="header-title">Camere Apogeo</div>
+    <div class="header-logo-wrapper">
+      <img class="header-logo" src="icon-192.png" alt="Logo">
+      <span class="header-logo-caption">by K</span>
+    </div>
   </div>
+  <div class="sync" id="sync">Connessione...</div>
+</header>
+
+<div class="legend">
+  <div class="leg"><div class="box" style="background:#bdbdbd"></div> Non usata / rifatta</div>
+  <div class="leg"><div class="box" style="background:#f8c7d2"></div> Da rifare</div>
+  <div class="leg"><div class="box" style="background:#bfe8b8"></div> Libera e accessibile</div>
+  <div class="leg"><div class="box" style="border:6px solid red"></div> Priorità</div>
+  <div class="leg"><div class="box" style="border:6px solid #6b3e12"></div> Sosta</div>
+  <div class="leg">🚫 DND</div>
+  <div class="leg">⭐ Night worker</div>
 </div>
 
 <div class="grid" id="grid"></div>
 
-<div class="admin-actions">
-  <button class="btn-reset-all" id="resetAllRoomsBtn">⚠️ RESET TUTTE LE CAMERE</button>
+<!-- CHAT -->
+<div class="chat-section">
+  <h3>💬 Messaggi pulizie</h3>
+
+  <div class="chat-sender-row">
+    <label>Chi scrive:</label>
+    <select class="chat-sender-select" id="senderSelect">
+      <option value="reception">📋 Reception</option>
+      <option value="cleaning">🧹 Pulizie</option>
+      <option value="other">👤 Altro</option>
+    </select>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <span class="chat-empty">Nessun messaggio ancora.</span>
+  </div>
+
+  <div class="chat-input-row">
+    <textarea class="chat-input" id="chatInput" placeholder="Scrivi un messaggio..." rows="1"></textarea>
+    <button class="chat-send-btn" id="chatSendBtn">➤</button>
+  </div>
 </div>
+
+<div class="stats" id="stats"></div>
 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h2 id="modalTitle" style="text-align:center; margin-bottom:15px;"></h2>
-    <button style="background:#bdbdbd" onclick="setS('inactive')">⚪ Rifatta</button>
-    <button style="background:#f8c7d2" onclick="setS('todo')">🌸 Da rifare</button>
-    <button style="background:#bfe8b8" onclick="setS('ready')">🟢 Libera</button>
-    <hr style="margin:10px 0">
-    <button id="prioT" class="toggle-btn" onclick="toggleT('priority')">🔴 Priorità</button>
-    <button id="stayT" class="toggle-btn" onclick="toggleT('stay')">🟫 Sosta</button>
-    <button style="background:black; color:white; margin-top:15px;" id="saveBtn">SALVA</button>
+
+    <h2 id="modalTitle">Camera</h2>
+
+    <div class="btn-grid">
+      <button class="btn btn-gray"  data-state="inactive">⚪ Non usata / rifatta</button>
+      <button class="btn btn-pink"  data-state="todo">🌸 Da rifare</button>
+      <button class="btn btn-green" data-state="ready">🟢 Libera / accessibile</button>
+    </div>
+
+    <div class="toggle" id="priorityToggle">🔴 Priorità</div>
+    <div class="toggle" id="stayToggle">🟫 Camera in sosta</div>
+    <div class="toggle" id="dndToggle">🚫 Non disturbare</div>
+    <div class="toggle" id="nightToggle">⭐ Lavoratore notturno</div>
+
+    <button class="save" id="saveBtn">SALVA</button>
+
   </div>
 </div>
 
 <script type="module">
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, onValue, set, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8NCJf6E2o2baLJEeHFq6VgfbCMQuQkgw",
   authDomain: "camere-apogeo.firebaseapp.com",
   databaseURL: "https://camere-apogeo-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "camere-apogeo",
+  storageBucket: "camere-apogeo.firebasestorage.app",
+  messagingSenderId: "1029900577269",
+  appId: "1:1029900577269:web:2fc8cf88fb9fa9703918bc"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const ROOMS = ['130','14','15','16','18','20','21','22','23','24','25','26','28a','28b','29','30','31','32','33','34','35','36','37','38','39','40','41a','41b','42','43','44','45','46','47','48'];
+const db  = getDatabase(app);
+
+const ROOMS = [
+  '130','14','15','16','18','20','21','22','23','24','25','26',
+  '28a','28b','29','30','31','32','33','34','35','36','37','38',
+  '39','40','41a','41b','42','43','44','45','46','47','48'
+];
 
 let data = {};
-let currentR = null;
-let temp = {};
+let currentRoom = null;
 
-// Sincronizzazione Camere
-onValue(ref(db, 'camere'), (snap) => {
-  data = snap.val() || {};
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  ROOMS.forEach(r => {
-    const d = data[r] || { state: 'inactive' };
-    const div = document.createElement('div');
-    div.className = `room state-${d.state} ${d.priority?'priority':''} ${d.stay?'stay':''}`;
-    div.innerText = r;
-    div.onclick = () => {
-      currentR = r;
-      temp = {...d};
-      document.getElementById('modalTitle').innerText = 'Camera ' + r;
-      document.getElementById('prioT').classList.toggle('active', temp.priority);
-      document.getElementById('stayT').classList.toggle('active', temp.stay);
-      document.getElementById('modalBg').classList.add('open');
-    };
-    grid.appendChild(div);
-  });
-});
-
-// Sincronizzazione Note
-onValue(ref(db, 'reception_notes'), (snap) => {
-  document.getElementById('noteArea').value = snap.val() || "";
-});
-
-window.setS = (s) => temp.state = s;
-window.toggleT = (f) => { 
-  temp[f] = !temp[f]; 
-  document.getElementById(f === 'priority' ? 'prioT' : 'stayT').classList.toggle('active', temp[f]);
+let temp = {
+  state: 'inactive',
+  priority: false,
+  stay: false,
+  dnd: false,
+  night: false
 };
 
+/* ── CAMERE ── */
+
+onValue(ref(db, 'camere'), (snap) => {
+  data = snap.val() || {};
+
+  ROOMS.forEach(r => {
+    if (!data[r]) {
+      data[r] = { state: 'inactive', priority: false, stay: false, dnd: false, night: false };
+    }
+  });
+
+  render();
+  renderStats();
+  document.getElementById('sync').innerText = '🟢 Sincronizzato';
+});
+
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  ROOMS.forEach(room => {
+    const d = data[room];
+    const div = document.createElement('div');
+    div.className = 'room state-' + d.state;
+    if (d.priority) div.classList.add('priority');
+    if (d.stay)     div.classList.add('stay');
+    if (d.dnd)      div.classList.add('dnd');
+    if (d.night)    div.classList.add('night');
+    div.innerHTML = '<div class="room-number">' + room + '</div>';
+    div.onclick = () => openModal(room);
+    grid.appendChild(div);
+  });
+}
+
+function renderStats() {
+  let todo = 0, ready = 0, stay = 0, priority = 0;
+  ROOMS.forEach(r => {
+    const d = data[r];
+    if (d.state === 'todo')  todo++;
+    if (d.state === 'ready') ready++;
+    if (d.stay)     stay++;
+    if (d.priority) priority++;
+  });
+  document.getElementById('stats').innerHTML =
+    `🌸 Da rifare: ${todo} &nbsp; 🟢 Libere: ${ready} &nbsp; 🟫 Sosta: ${stay} &nbsp; 🔴 Priorità: ${priority}`;
+}
+
+function openModal(room) {
+  currentRoom = room;
+  temp = { ...data[room] };
+  document.getElementById('modalTitle').innerText = 'Camera ' + room;
+  updateToggleUI();
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function updateToggleUI() {
+  document.getElementById('priorityToggle').classList.toggle('active-red',   temp.priority);
+  document.getElementById('stayToggle').classList.toggle('active-brown', temp.stay);
+  document.getElementById('dndToggle').classList.toggle('active-dark',   temp.dnd);
+  document.getElementById('nightToggle').classList.toggle('active-star',  temp.night);
+}
+
+document.querySelectorAll('[data-state]').forEach(btn => {
+  btn.onclick = () => { temp.state = btn.dataset.state; };
+});
+
+document.getElementById('priorityToggle').onclick = () => { temp.priority = !temp.priority; updateToggleUI(); };
+document.getElementById('stayToggle').onclick     = () => { temp.stay     = !temp.stay;     updateToggleUI(); };
+document.getElementById('dndToggle').onclick      = () => { temp.dnd      = !temp.dnd;      updateToggleUI(); };
+document.getElementById('nightToggle').onclick    = () => { temp.night    = !temp.night;    updateToggleUI(); };
+
 document.getElementById('saveBtn').onclick = () => {
-  set(ref(db, 'camere/' + currentR), temp);
+  data[currentRoom] = temp;
+  set(ref(db, 'camere/' + currentRoom), temp);
+  render();
+  renderStats();
   document.getElementById('modalBg').classList.remove('open');
 };
 
-// Logica Pulsanti Reset
-document.getElementById('resetAllRoomsBtn').onclick = () => {
-  if(confirm("Vuoi resettare tutte le camere a 'Rifatta'?")) {
-    const resetObj = {};
-    ROOMS.forEach(r => resetObj[r] = { state: 'inactive', priority: false, stay: false });
-    set(ref(db, 'camere'), resetObj);
+document.getElementById('modalBg').onclick = (e) => {
+  if (e.target.id === 'modalBg') document.getElementById('modalBg').classList.remove('open');
+};
+
+/* ── CHAT ── */
+
+const SENDER_LABELS = {
+  reception: '📋 Reception',
+  cleaning:  '🧹 Pulizie',
+  other:     '👤 Altro'
+};
+
+onValue(ref(db, 'chat'), (snap) => {
+  const msgs = snap.val();
+  const container = document.getElementById('chatMessages');
+  container.innerHTML = '';
+
+  if (!msgs) {
+    container.innerHTML = '<span class="chat-empty">Nessun messaggio ancora.</span>';
+    return;
   }
-};
 
-document.getElementById('saveNoteBtn').onclick = () => {
-  set(ref(db, 'reception_notes'), document.getElementById('noteArea').value);
-  alert("Note salvate!");
-};
+  // Firebase restituisce un oggetto; ordiniamo per timestamp
+  const list = Object.values(msgs).sort((a, b) => (a.ts || 0) - (b.ts || 0));
 
-document.getElementById('resetNoteBtn').onclick = () => {
-  if(confirm("Cancellare tutte le note?")) {
-    set(ref(db, 'reception_notes'), "");
+  list.forEach(msg => {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble from-' + (msg.sender || 'other');
+
+    const time = msg.ts
+      ? new Date(msg.ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+      : '';
+
+    bubble.innerHTML =
+      `<span>${msg.text}</span>` +
+      `<span class="bubble-meta">${SENDER_LABELS[msg.sender] || '👤'} · ${time}</span>`;
+
+    container.appendChild(bubble);
+  });
+
+  // scroll in fondo
+  container.scrollTop = container.scrollHeight;
+});
+
+function sendChatMessage() {
+  const input  = document.getElementById('chatInput');
+  const sender = document.getElementById('senderSelect').value;
+  const text   = input.value.trim();
+  if (!text) return;
+
+  push(ref(db, 'chat'), {
+    text:   text,
+    sender: sender,
+    ts:     Date.now()
+  });
+
+  input.value = '';
+  input.style.height = 'auto';
+}
+
+document.getElementById('chatSendBtn').onclick = sendChatMessage;
+
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  // Invio senza Shift manda il messaggio
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage();
   }
-};
+});
 
-document.getElementById('modalBg').onclick = (e) => { if(e.target.id === 'modalBg') e.target.classList.remove('open'); };
+// auto-resize textarea
+document.getElementById('chatInput').addEventListener('input', function () {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js');
+}
+
 </script>
+
 </body>
 </html>
