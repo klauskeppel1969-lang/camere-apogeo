@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Registro Manutenzione – Hotel Apogeo</title>
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Manutenzione Apogeo">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: Arial, Helvetica, sans-serif; background: #f0f0f0; padding-bottom: 40px; }
+
+header {
+  background: #1a237e; color: white; padding: 14px 18px;
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 4px solid #d4af37;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.header-main { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 700px; }
+.header-title { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+.header-sub { font-size: 12px; color: #9fa8da; margin-top: 2px; text-align: center; }
+.back-btn {
+  padding: 8px 16px; background: rgba(255,255,255,0.15); color: white;
+  border: 2px solid rgba(255,255,255,0.3); border-radius: 10px;
+  font-size: 14px; font-weight: 900; cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; gap: 6px;
+}
+.sync { font-size: 12px; color: #9fa8da; }
+
+/* FILTRI */
+.filter-bar {
+  background: white; border-bottom: 2px solid #ddd;
+  padding: 10px 14px; display: flex; gap: 8px; flex-wrap: wrap;
+  max-width: 700px; margin: 0 auto; justify-content: center;
+}
+.filter-btn {
+  padding: 8px 16px; border: 2px solid #ddd; border-radius: 20px;
+  font-size: 14px; font-weight: 700; cursor: pointer; background: white; color: #555;
+}
+.filter-btn.active { background: #1a237e; color: white; border-color: #1a237e; }
+.filter-btn:active { transform: scale(0.95); }
+
+/* STATISTICHE */
+.stat-bar {
+  max-width: 700px; margin: 12px auto 0; padding: 0 14px;
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.stat-card {
+  flex: 1; min-width: 100px; background: white; border-radius: 12px;
+  padding: 12px 14px; text-align: center; border: 2px solid #ddd;
+}
+.stat-num { font-size: 28px; font-weight: 900; }
+.stat-label { font-size: 12px; color: #888; margin-top: 2px; }
+.stat-card.aperte { border-color: #e53935; }
+.stat-card.aperte .stat-num { color: #e53935; }
+.stat-card.risolte { border-color: #2e7d32; }
+.stat-card.risolte .stat-num { color: #2e7d32; }
+.stat-card.totale { border-color: #1a237e; }
+.stat-card.totale .stat-num { color: #1a237e; }
+
+/* LISTA */
+.list-section { max-width: 700px; margin: 12px auto 0; padding: 0 14px; }
+.list-empty { text-align: center; color: #aaa; font-size: 16px; padding: 40px 20px; }
+
+.maint-item {
+  background: white; border-radius: 14px; padding: 14px 16px;
+  margin-bottom: 10px; border-left: 6px solid #e53935;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.maint-item.risolto { border-left-color: #2e7d32; opacity: 0.75; }
+
+.maint-item-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.maint-item-text { font-size: 16px; font-weight: 700; color: #1a237e; line-height: 1.4; flex: 1; }
+.maint-badge {
+  padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 900;
+  flex-shrink: 0; white-space: nowrap;
+}
+.badge-aperta  { background: #ffebee; color: #c62828; }
+.badge-risolta { background: #e8f5e9; color: #2e7d32; }
+
+.maint-item-dates { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 10px; }
+.maint-date { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; }
+.maint-date strong { color: #555; }
+
+/* STAMPA */
+@media print {
+  header, .filter-bar, .stat-bar { display: none !important; }
+  body { background: white; }
+  .maint-item { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-main">
+    <div style="font-size:20px;font-weight:900;">🔧 Registro Manutenzione</div>
+    <a class="back-btn" href="index.html">← App</a>
+  </div>
+  <div class="header-sub">Hotel Apogeo — storico completo segnalazioni</div>
+  <div class="sync" id="sync">Connessione...</div>
+</header>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="tutti">Tutte</button>
+  <button class="filter-btn" data-filter="aperte">🔴 Aperte</button>
+  <button class="filter-btn" data-filter="risolte">🟢 Risolte</button>
+</div>
+
+<div class="stat-bar">
+  <div class="stat-card aperte">
+    <div class="stat-num" id="statAperte">–</div>
+    <div class="stat-label">Aperte</div>
+  </div>
+  <div class="stat-card risolte">
+    <div class="stat-num" id="statRisolte">–</div>
+    <div class="stat-label">Risolte</div>
+  </div>
+  <div class="stat-card totale">
+    <div class="stat-num" id="statTotale">–</div>
+    <div class="stat-label">Totale</div>
+  </div>
+</div>
+
+<div class="list-section" id="listSection"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8NCJf6E2o2baLJEeHFq6VgfbCMQuQkgw",
+  authDomain: "camere-apogeo.firebaseapp.com",
+  databaseURL: "https://camere-apogeo-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "camere-apogeo",
+  storageBucket: "camere-apogeo.firebasestorage.app",
+  messagingSenderId: "1029900577269",
+  appId: "1:1029900577269:web:2fc8cf88fb9fa9703918bc"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+let allItems = [];
+let currentFilter = 'tutti';
+
+function fmtDate(ts) {
+  if (!ts) return '–';
+  return new Date(ts).toLocaleString('it-IT', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+onValue(ref(db, 'manutenzione'), (snap) => {
+  const raw = snap.val() || {};
+  // ordina dal più recente
+  allItems = Object.entries(raw).sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
+  renderStats();
+  renderList();
+  document.getElementById('sync').innerText = '🟢 Sincronizzato ' +
+    new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+}, () => {
+  document.getElementById('sync').innerText = '🔴 Errore connessione';
+});
+
+function renderStats() {
+  const aperte  = allItems.filter(([, i]) => !i.risolto).length;
+  const risolte = allItems.filter(([, i]) =>  i.risolto).length;
+  document.getElementById('statAperte').textContent  = aperte;
+  document.getElementById('statRisolte').textContent = risolte;
+  document.getElementById('statTotale').textContent  = allItems.length;
+}
+
+function renderList() {
+  const section = document.getElementById('listSection');
+
+  let filtered = allItems;
+  if (currentFilter === 'aperte')  filtered = allItems.filter(([, i]) => !i.risolto);
+  if (currentFilter === 'risolte') filtered = allItems.filter(([, i]) =>  i.risolto);
+
+  if (!filtered.length) {
+    section.innerHTML = '<div class="list-empty">Nessuna segnalazione trovata.</div>';
+    return;
+  }
+
+  section.innerHTML = '';
+  filtered.forEach(([key, item]) => {
+    const div = document.createElement('div');
+    div.className = 'maint-item' + (item.risolto ? ' risolto' : '');
+
+    const badge = item.risolto
+      ? `<span class="maint-badge badge-risolta">✓ Risolta</span>`
+      : `<span class="maint-badge badge-aperta">● Aperta</span>`;
+
+    const dateAperta = `
+      <div class="maint-date">🕐 Segnalata: <strong>${fmtDate(item.ts)}</strong></div>`;
+    const dateRisolta = item.risolto
+      ? `<div class="maint-date">✅ Risolta: <strong>${fmtDate(item.ts_risolto)}</strong></div>`
+      : '';
+
+    div.innerHTML = `
+      <div class="maint-item-header">
+        <div class="maint-item-text">${item.text}</div>
+        ${badge}
+      </div>
+      <div class="maint-item-dates">
+        ${dateAperta}
+        ${dateRisolta}
+      </div>`;
+
+    section.appendChild(div);
+  });
+}
+
+// filtri
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderList();
+  });
+});
+</script>
+</body>
+</html>
