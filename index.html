@@ -3,356 +3,421 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Camere Apogeo</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111111">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Camere Apogeo">
+<meta name="theme-color" content="#ffffff">
+<title>Camere – Hotel Apogeo</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { font-family: Arial, Helvetica, sans-serif; background: #f0f0f0; padding-bottom: 120px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f0ede8;
+  min-height: 100vh;
+  padding-bottom: 140px;
+}
 
 header {
-  background: #111; color: white; padding: 12px 18px;
-  position: sticky; top: 0; z-index: 100;
-  border-bottom: 4px solid #d4af37;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: #fff;
+  border-bottom: 2px solid #d0ccc4;
+  padding: 14px 16px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
-.header-main { display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; }
-.header-title { font-size: 26px; font-weight: 900; letter-spacing: 1px; color: white; }
-.header-logo-wrapper { display: flex; flex-direction: column; align-items: center; gap: 1px; border-left: 1px solid #333; padding-left: 14px; }
-.header-logo { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 0 6px rgba(212,175,55,0.7)); }
-.header-logo-caption { font-size: 8px; color: #d4af37; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; opacity: 0.8; }
-.sync { font-size: 12px; color: #888; }
 
-.action-bar {
-  background: #fff; border-bottom: 2px solid #ddd;
-  padding: 10px 14px; display: flex; gap: 10px;
-  justify-content: center; max-width: 700px; margin: 0 auto;
-}
-.action-btn {
-  flex: 1; padding: 12px 8px; border: none; border-radius: 12px;
-  font-size: 14px; font-weight: 900; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.action-btn:active { transform: scale(0.94); }
-.btn-reset { background: #e0e0e0; color: #333; }
-.btn-print { background: #111; color: white; }
+header h1 { font-size: 18px; font-weight: 700; color: #1a1a1a; }
 
+.sync-indicator {
+  font-size: 12px; color: #888; margin-top: 3px;
+  display: flex; align-items: center; gap: 6px;
+}
+.sync-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #ccc; display: inline-block; transition: background 0.3s;
+}
+.sync-dot.online  { background: #2e7d0e; }
+.sync-dot.syncing { background: #c47a00; }
+.sync-dot.error   { background: #c0392b; }
+
+/* ─── LEGENDA ─── */
 .legend {
-  background: white; padding: 14px;
-  display: flex; flex-wrap: wrap; gap: 12px;
-  justify-content: center; border-bottom: 2px solid #ddd;
+  background: #fff;
+  border-bottom: 2px solid #d0ccc4;
+  padding: 10px 14px;
+  display: flex; flex-wrap: wrap; gap: 8px 16px;
 }
-.leg { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold; }
-.box { width: 22px; height: 22px; border-radius: 4px; }
-
-/* GRIGLIA 5 colonne */
-.grid {
-  display: grid; grid-template-columns: repeat(5, 1fr);
-  gap: 10px; padding: 14px; max-width: 700px; margin: auto;
-}
-.room {
-  aspect-ratio: 1; border-radius: 14px;
+.leg { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #444; font-weight: 500; }
+.leg-box {
+  width: 22px; height: 22px; border-radius: 5px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  position: relative; cursor: pointer;
-  border: 7px solid transparent;
-  transition: transform 0.1s; user-select: none;
+  font-size: 11px;
 }
-.room:active { transform: scale(0.92); }
-.room-number { font-size: 28px; font-weight: 900; }
-.state-inactive { background: #bdbdbd; color: #333; }
-.state-todo     { background: #f8c7d2; color: #791f1f; }
-.state-ready    { background: #bfe8b8; color: #1d5c1d; }
-.priority { border: 9px solid #ff1f1f; }
-.stay     { border: 9px solid #6b3e12; }
-.dnd::after    { content: '🚫'; position: absolute; top: 1px; right: 2px; font-size: 26px; }
-.night::before { content: '⭐'; position: absolute; top: 1px; left: 2px; font-size: 20px; }
 
-/* NOTE RECEPTION */
-.note-section {
-  max-width: 700px; margin: 14px auto 0; padding: 0 14px;
+/* ─── GRIGLIA ─── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 14px;
+  max-width: 480px;
+  margin: 0 auto;
 }
-.note-box {
-  background: #fffde7;
-  border: 3px solid #f9a825;
-  border-radius: 16px;
-  padding: 16px;
-}
-.note-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
-}
-.note-title {
-  font-size: 17px; font-weight: 900; color: #5d4037;
-  letter-spacing: 0.5px; text-transform: uppercase;
-  display: flex; align-items: center; gap: 8px;
-}
-.note-clear-btn {
-  padding: 6px 14px; background: #e65100; color: white;
-  border: none; border-radius: 10px; font-size: 13px; font-weight: 900; cursor: pointer;
-}
-.note-clear-btn:active { opacity: 0.8; }
-.note-textarea {
-  width: 100%; min-height: 100px; padding: 12px;
-  border: 2px solid #f9a825; border-radius: 10px;
-  font-size: 17px; font-family: Arial, sans-serif;
-  color: #3e2723; background: #fffff0;
-  resize: vertical; outline: none; line-height: 1.6;
-}
-.note-textarea:focus { border-color: #e65100; }
-.note-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-.note-status { font-size: 12px; color: #a0522d; }
-.note-save-btn {
-  padding: 10px 22px; background: #e65100; color: white;
-  border: none; border-radius: 10px; font-size: 15px; font-weight: 900; cursor: pointer;
-}
-.note-save-btn:active { opacity: 0.8; }
 
-/* MANUTENZIONE */
-.maint-section { max-width: 700px; margin: 14px auto 0; padding: 0 14px; }
-.maint-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.maint-title { font-size: 17px; font-weight: 900; color: #1a237e; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-.maint-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; min-height: 40px; }
-.maint-item {
-  background: #e8eaf6; border: 2px solid #3949ab;
-  border-radius: 12px; padding: 12px 14px;
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+/* ─── CAMERA BASE ─── */
+.room {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: transform 0.1s;
+  /* bordo base: trasparente, verrà sovrascritto dagli stati */
+  border: 5px solid transparent;
 }
-.maint-item-text { font-size: 15px; color: #1a237e; flex: 1; line-height: 1.4; }
-.maint-item-meta { font-size: 11px; color: #7986cb; margin-top: 2px; }
-.maint-resolve-btn {
-  padding: 8px 14px; background: #1a237e; color: white;
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; flex-shrink: 0;
-}
-.maint-resolve-btn:active { opacity: 0.8; }
-.maint-empty { color: #aaa; font-size: 14px; text-align: center; padding: 12px; }
-.maint-input-row { display: flex; gap: 8px; }
-.maint-input {
-  flex: 1; padding: 12px 14px; border-radius: 12px;
-  border: 3px solid #3949ab; font-size: 16px; resize: none;
-  min-height: 50px; max-height: 100px; font-family: Arial, sans-serif;
-}
-.maint-send-btn {
-  padding: 12px 18px; background: #1a237e; color: white;
-  border: none; border-radius: 12px; font-size: 22px; cursor: pointer; flex-shrink: 0;
-}
-.maint-send-btn:active { transform: scale(0.92); }
+.room:active { transform: scale(0.88); }
 
-/* CHAT */
-.chat-section { max-width: 700px; margin: 14px auto 0; padding: 0 14px; }
-.chat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.chat-header h3 { font-size: 16px; font-weight: 900; color: #333; letter-spacing: 1px; text-transform: uppercase; }
-.chat-reset-btn { padding: 7px 14px; background: #c0392b; color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 900; cursor: pointer; }
-.chat-reset-btn:active { opacity: 0.8; }
-.chat-sender-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-.chat-sender-row label { font-size: 14px; font-weight: bold; color: #555; }
-.chat-sender-select { flex: 1; min-width: 140px; padding: 8px 10px; border-radius: 10px; border: 2px solid #ccc; font-size: 16px; background: white; }
-.chat-messages {
-  background: #fff; border-radius: 16px; border: 2px solid #ddd;
-  padding: 12px; min-height: 120px; max-height: 280px;
-  overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;
+/* numero camera — GRANDE */
+.room-num {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
 }
-.chat-empty { color: #aaa; font-size: 15px; text-align: center; margin: auto; }
-.bubble { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 15px; line-height: 1.4; }
-.bubble.from-reception { background: #111; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-.bubble.from-cleaning  { background: #bfe8b8; color: #1d5c1d; align-self: flex-start; border-bottom-left-radius: 4px; }
-.bubble.from-other     { background: #f8c7d2; color: #791f1f; align-self: flex-start; border-bottom-left-radius: 4px; }
-.bubble-meta { font-size: 11px; opacity: 0.65; margin-top: 4px; display: block; }
-.chat-input-row { display: flex; gap: 8px; }
-.chat-input { flex: 1; padding: 12px 14px; border-radius: 12px; border: 3px solid #ccc; font-size: 16px; resize: none; min-height: 50px; max-height: 120px; }
-.chat-send-btn { padding: 12px 18px; background: #111; color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; flex-shrink: 0; }
-.chat-send-btn:active { transform: scale(0.92); }
+/* etichetta sotto */
+.room-tag {
+  font-size: 9px;
+  font-weight: 600;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: center;
+  padding: 0 4px;
+}
 
+/* ─── STATI CAMERA ─── */
+
+/* Non da rifare: grigio spento */
+.s-skip {
+  background: #d8d5cf;
+  border-color: #b0ada6;
+  opacity: 0.55;
+}
+.s-skip .room-num, .s-skip .room-tag { color: #777; }
+
+/* Da riassettare: verde chiaro, cornice verde */
+.s-todo {
+  background: #d4edba;
+  border-color: #5a9b1a;
+}
+.s-todo .room-num, .s-todo .room-tag { color: #2e5a08; }
+
+/* Già riassettata: blu chiaro */
+.s-clean {
+  background: #b8d9f7;
+  border-color: #2878cc;
+}
+.s-clean .room-num, .s-clean .room-tag { color: #0a3d7a; }
+
+/* In sosta / non ancora accessibile: arancione, cornice spessa arancione */
+.s-sosta {
+  background: #fde8c0;
+  border-color: #c47a00;
+  border-width: 6px;
+}
+.s-sosta .room-num, .s-sosta .room-tag { color: #7a4500; }
+
+/* ─── MODIFICATORI SPECIALI ─── */
+
+/* Priorità urgente: cornice rossa spessissima + bagliore */
+.urgent {
+  border-color: #c0392b !important;
+  border-width: 7px !important;
+  box-shadow: 0 0 0 3px #e74c3c, 0 0 14px 4px rgba(192,57,43,0.45);
+}
+
+/* In uscita: trattino tratteggiato blu scuro sovrapposto alla cornice */
+.checkout {
+  outline: 4px dashed #1a5fa8;
+  outline-offset: 2px;
+}
+
+/* DND: overlay semitrasparente rosso scuro */
+.room.dnd::before {
+  content: '🚫';
+  position: absolute;
+  top: 4px; left: 5px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Lavoratore notturno: asterisco grande */
+.room.nightworker::after {
+  content: '★';
+  position: absolute;
+  top: 2px; right: 5px;
+  font-size: 22px;
+  color: #6a0dad;
+  line-height: 1;
+  text-shadow: 0 0 4px rgba(106,13,173,0.4);
+}
+
+/* ─── NOTE ─── */
+.notes-section {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 14px 16px;
+}
+.notes-label { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 7px; }
+.notes-box {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a1a1a;
+  background: #fff;
+  resize: vertical;
+  outline: none;
+}
+.notes-box:focus { border-color: #2878cc; }
+.notes-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 7px; }
+.notes-status { font-size: 12px; color: #aaa; }
+.notes-save {
+  padding: 8px 20px;
+  background: #1a1a1a; color: #fff;
+  border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+.notes-save:active { opacity: 0.7; }
+
+/* ─── STATISTICHE FISSE ─── */
 .stats {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: white; border-top: 3px solid #ccc;
-  padding: 10px; display: flex; justify-content: center;
-  gap: 16px; flex-wrap: wrap; font-weight: bold;
+  background: #fff;
+  border-top: 2px solid #d0ccc4;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 8px 14px 12px;
+  display: flex; flex-wrap: wrap; gap: 5px 12px;
+  z-index: 10;
+}
+.stat { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+.stat-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.stat strong { color: #1a1a1a; font-weight: 700; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 100; align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  width: 100%; max-width: 480px;
+  padding: 16px 16px 40px;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+.modal-handle { width: 38px; height: 5px; background: #ddd; border-radius: 3px; margin: 0 auto 14px; }
+.modal-title {
+  font-size: 22px; font-weight: 800; color: #1a1a1a;
+  text-align: center; margin-bottom: 16px;
 }
 
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-end; }
-.modal-bg.open { display: flex; }
-.modal { background: white; width: 100%; max-width: 700px; margin: auto; border-radius: 20px 20px 0 0; padding: 18px; }
-.modal h2 { text-align: center; margin-bottom: 18px; font-size: 28px; }
-.btn-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.btn { padding: 18px; border: none; border-radius: 12px; font-size: 20px; font-weight: 900; cursor: pointer; }
-.btn-gray  { background: #bdbdbd; }
-.btn-pink  { background: #f8c7d2; }
-.btn-green { background: #bfe8b8; }
-.toggle { margin-top: 10px; padding: 16px; border-radius: 12px; background: #f5f5f5; font-size: 20px; font-weight: bold; cursor: pointer; }
-.toggle.active-red   { border: 6px solid red; }
-.toggle.active-brown { border: 6px solid #6b3e12; }
-.toggle.active-dark  { border: 6px solid #222; }
-.toggle.active-star  { border: 6px solid #d60000; }
-.save { width: 100%; margin-top: 16px; padding: 18px; background: black; color: white; border: none; border-radius: 14px; font-size: 22px; font-weight: 900; }
+/* sezione modal */
+.modal-section-label {
+  font-size: 11px; font-weight: 700; color: #888;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin: 14px 0 7px;
+}
 
-/* PIN MODAL */
-.pin-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 400; align-items: center; justify-content: center; }
-.pin-bg.open { display: flex; }
-.pin-box { background: white; border-radius: 20px; padding: 28px 22px; max-width: 280px; width: 90%; text-align: center; }
-.pin-box h3 { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
-.pin-box p  { font-size: 13px; color: #888; margin-bottom: 16px; }
-.pin-display {
-  font-size: 36px; font-weight: 900; letter-spacing: 12px;
-  height: 56px; line-height: 56px;
-  border: 3px solid #ccc; border-radius: 12px;
-  margin-bottom: 14px; background: #f9f9f9;
-  min-width: 120px; display: inline-block; padding: 0 14px;
+/* bottoni opzione 2 colonne */
+.modal-options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 4px;
 }
-.pin-display.error { border-color: #c0392b; color: #c0392b; animation: shake 0.3s; }
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  25%      { transform: translateX(-6px); }
-  75%      { transform: translateX(6px); }
+.opt-btn {
+  padding: 14px 8px; border-radius: 11px;
+  border: 5px solid transparent;
+  cursor: pointer; text-align: center;
+  font-size: 14px; font-weight: 700;
+  transition: transform 0.1s;
+  line-height: 1.3;
 }
-.pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
-.pin-key { padding: 16px; border: none; border-radius: 12px; background: #f0f0f0; font-size: 22px; font-weight: 900; cursor: pointer; }
-.pin-key:active { background: #ddd; transform: scale(0.92); }
-.pin-key.del { background: #fde8e8; color: #c0392b; }
-.pin-cancel { width: 100%; padding: 14px; border: none; border-radius: 12px; background: #e0e0e0; color: #333; font-size: 16px; font-weight: 900; cursor: pointer; }
+.opt-btn:active { transform: scale(0.93); }
 
-@media print {
-  body > *:not(#printArea) { display: none !important; }
-  #printArea { display: block !important; }
-  @page { size: A4 portrait; margin: 8mm; }
+.opt-skip  { background: #d8d5cf; color: #555; }
+.opt-todo  { background: #d4edba; color: #2e5a08; }
+.opt-clean { background: #b8d9f7; color: #0a3d7a; }
+.opt-sosta { background: #fde8c0; color: #7a4500; }
+
+.opt-btn.selected { border-color: #1a1a1a; }
+
+/* toggle row */
+.toggle-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 13px 14px;
+  border-radius: 11px;
+  margin-bottom: 9px;
+  cursor: pointer;
+  border: 4px solid transparent;
 }
-#printArea { display: none; }
+.toggle-row:active { opacity: 0.8; }
+
+.toggle-row.tr-checkout           { background: #e8f0fb; }
+.toggle-row.tr-checkout.selected  { border-color: #1a5fa8; background: #cfe0f8; }
+.toggle-row.tr-dnd                { background: #fbeaea; }
+.toggle-row.tr-dnd.selected       { border-color: #c0392b; background: #f5c6c6; }
+.toggle-row.tr-night              { background: #f3eafc; }
+.toggle-row.tr-night.selected     { border-color: #6a0dad; background: #dfc8f7; }
+.toggle-row.tr-urgent             { background: #fff3e0; }
+.toggle-row.tr-urgent.selected    { border-color: #c0392b; background: #ffd6cc; }
+
+.row-label { font-size: 15px; font-weight: 700; }
+.row-desc  { font-size: 12px; margin-top: 2px; color: #666; }
+
+.toggle-switch {
+  width: 48px; height: 28px; background: #ddd;
+  border-radius: 14px; position: relative;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.toggle-switch::after {
+  content: ''; position: absolute;
+  width: 22px; height: 22px; background: #fff;
+  border-radius: 50%; top: 3px; left: 3px;
+  transition: left 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.toggle-switch.on { background: #2e7d0e; }
+.toggle-switch.on-blue { background: #1a5fa8; }
+.toggle-switch.on-red { background: #c0392b; }
+.toggle-switch.on-purple { background: #6a0dad; }
+.toggle-switch.on::after,
+.toggle-switch.on-blue::after,
+.toggle-switch.on-red::after,
+.toggle-switch.on-purple::after { left: 23px; }
+
+.modal-confirm {
+  width: 100%; padding: 16px;
+  background: #1a1a1a; color: #fff;
+  border: none; border-radius: 12px;
+  font-size: 17px; font-weight: 700;
+  cursor: pointer; margin-top: 8px;
+}
+.modal-confirm:active { opacity: 0.8; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-main">
-    <div class="header-title">Camere Apogeo</div>
-    <div class="header-logo-wrapper">
-      <img class="header-logo" src="icon-192.png" alt="Logo">
-      <span class="header-logo-caption">by K</span>
-    </div>
+  <h1>Hotel Apogeo — Camere</h1>
+  <div class="sync-indicator">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncLabel">Connessione...</span>
   </div>
-  <div class="sync" id="sync">Connessione...</div>
 </header>
 
-<div class="action-bar">
-  <button class="action-btn btn-reset" id="resetBtn">🔄 Reset rifatto</button>
-  <button class="action-btn btn-print" id="printBtn">🖨️ Stampa report</button>
-</div>
-
 <div class="legend">
-  <div class="leg"><div class="box" style="background:#bdbdbd"></div> Non usata/rifatta</div>
-  <div class="leg"><div class="box" style="background:#f8c7d2"></div> Da rifare</div>
-  <div class="leg"><div class="box" style="background:#bfe8b8"></div> Libera/accessibile</div>
-  <div class="leg"><div class="box" style="border:5px solid red;border-radius:4px;"></div> Priorità</div>
-  <div class="leg"><div class="box" style="border:5px solid #6b3e12;border-radius:4px;"></div> Sosta</div>
-  <div class="leg">🚫 DND</div>
-  <div class="leg">⭐ Night worker</div>
+  <div class="leg">
+    <div class="leg-box" style="background:#d8d5cf;border:2px solid #b0ada6;opacity:0.7"></div>Non rifare
+  </div>
+  <div class="leg">
+    <div class="leg-box" style="background:#d4edba;border:2px solid #5a9b1a"></div>Da rifare
+  </div>
+  <div class="leg">
+    <div class="leg-box" style="background:#fde8c0;border:3px solid #c47a00"></div>In sosta
+  </div>
+  <div class="leg">
+    <div class="leg-box" style="background:#b8d9f7;border:2px solid #2878cc"></div>Riassettata
+  </div>
+  <div class="leg">
+    <div class="leg-box" style="background:#d4edba;border:4px solid #c0392b;box-shadow:0 0 0 2px #e74c3c"></div>Urgente
+  </div>
+  <div class="leg">
+    <div class="leg-box" style="background:#d4edba;outline:3px dashed #1a5fa8;outline-offset:2px"></div>Checkout
+  </div>
+  <div class="leg"><span style="font-size:16px">🚫</span> Non disturbare</div>
+  <div class="leg"><span style="font-size:16px;color:#6a0dad">★</span> Lav. notturno</div>
 </div>
 
 <div class="grid" id="grid"></div>
 
-<!-- NOTE RECEPTION -->
-<div class="note-section">
-  <div class="note-box">
-    <div class="note-header">
-      <div class="note-title">📋 Note Reception</div>
-      <button class="note-clear-btn" id="noteClearBtn">🗑️ Cancella</button>
-    </div>
-    <textarea class="note-textarea" id="noteTextarea" placeholder=""></textarea>
-    <div class="note-footer">
-      <span class="note-status" id="noteStatus"></span>
-      <button class="note-save-btn" id="noteSaveBtn">💾 Salva</button>
-    </div>
-  </div>
-</div>
-
-<!-- MANUTENZIONE -->
-<div class="maint-section">
-  <div class="maint-header">
-    <div class="maint-title">🔧 Segnalazioni Manutenzione</div>
-  </div>
-  <div class="maint-list" id="maintList">
-    <div class="maint-empty">Nessuna segnalazione aperta.</div>
-  </div>
-  <div class="maint-input-row">
-    <textarea class="maint-input" id="maintInput" placeholder="" rows="1"></textarea>
-    <button class="maint-send-btn" id="maintSendBtn">➤</button>
-  </div>
-</div>
-
-<!-- CHAT -->
-<div class="chat-section">
-  <div class="chat-header">
-    <h3>💬 Chat veloce</h3>
-    <button class="chat-reset-btn" id="chatResetBtn">🗑️ Svuota</button>
-  </div>
-  <div class="chat-sender-row">
-    <label>Chi scrive:</label>
-    <select class="chat-sender-select" id="senderSelect">
-      <option value="reception">📋 Reception</option>
-      <option value="cleaning">🧹 Pulizie</option>
-      <option value="other">👤 Altro</option>
-    </select>
-  </div>
-  <div class="chat-messages" id="chatMessages">
-    <span class="chat-empty">Nessun messaggio ancora.</span>
-  </div>
-  <div class="chat-input-row">
-    <textarea class="chat-input" id="chatInput" placeholder="Scrivi un messaggio..." rows="1"></textarea>
-    <button class="chat-send-btn" id="chatSendBtn">➤</button>
+<div class="notes-section">
+  <div class="notes-label">📋 Note del giorno</div>
+  <textarea class="notes-box" id="notesBox" placeholder="Comunicazioni per le cameriere..."></textarea>
+  <div class="notes-footer">
+    <span class="notes-status" id="notesStatus"></span>
+    <button class="notes-save" id="notesSave">Salva nota</button>
   </div>
 </div>
 
 <div class="stats" id="stats"></div>
 
-<!-- MODAL CAMERA -->
-<div class="modal-bg" id="modalBg">
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <h2 id="modalTitle">Camera</h2>
-    <div class="btn-grid">
-      <button class="btn btn-gray"  data-state="inactive">⚪ Non usata / rifatta</button>
-      <button class="btn btn-pink"  data-state="todo">🌸 Da rifare</button>
-      <button class="btn btn-green" data-state="ready">🟢 Libera / accessibile</button>
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle">Camera —</div>
+
+    <div class="modal-section-label">Stato camera</div>
+    <div class="modal-options">
+      <button class="opt-btn opt-skip"  data-state="skip">⬜ Non da rifare</button>
+      <button class="opt-btn opt-todo"  data-state="todo">🟢 Da rifare</button>
+      <button class="opt-btn opt-sosta" data-state="sosta">🟠 In sosta</button>
+      <button class="opt-btn opt-clean" data-state="clean">🔵 Riassettata</button>
     </div>
-    <div class="toggle" id="priorityToggle">🔴 Priorità</div>
-    <div class="toggle" id="stayToggle">🟫 Camera in sosta</div>
-    <div class="toggle" id="dndToggle">🚫 Non disturbare</div>
-    <div class="toggle" id="nightToggle">⭐ Lavoratore notturno</div>
-    <button class="save" id="saveBtn">SALVA</button>
+
+    <div class="modal-section-label">Tipo soggiorno</div>
+    <div class="toggle-row tr-checkout" id="checkoutRow">
+      <div>
+        <div class="row-label">🧳 In uscita (checkout)</div>
+        <div class="row-desc">Il cliente parte oggi</div>
+      </div>
+      <div class="toggle-switch" id="checkoutToggle"></div>
+    </div>
+
+    <div class="modal-section-label">Condizioni speciali</div>
+    <div class="toggle-row tr-dnd" id="dndRow">
+      <div>
+        <div class="row-label">🚫 Non disturbare</div>
+        <div class="row-desc">Il cliente non vuole il riassetto</div>
+      </div>
+      <div class="toggle-switch" id="dndToggle"></div>
+    </div>
+    <div class="toggle-row tr-night" id="nightRow">
+      <div>
+        <div class="row-label">★ Lavoratore notturno</div>
+        <div class="row-desc">Non disturbare la mattina</div>
+      </div>
+      <div class="toggle-switch" id="nightToggle"></div>
+    </div>
+
+    <div class="modal-section-label">Priorità</div>
+    <div class="toggle-row tr-urgent" id="urgentRow">
+      <div>
+        <div class="row-label">⚡ Urgente / priorità</div>
+        <div class="row-desc">Da fare subito, prima delle altre</div>
+      </div>
+      <div class="toggle-switch" id="urgentToggle"></div>
+    </div>
+
+    <button class="modal-confirm" id="modalConfirm">✓ Conferma</button>
   </div>
 </div>
-
-<!-- PIN MODAL -->
-<div class="pin-bg" id="pinBg">
-  <div class="pin-box">
-    <h3>🔒 Codice PIN</h3>
-    <p id="pinAction">Inserisci il PIN per continuare</p>
-    <div class="pin-display" id="pinDisplay">–</div>
-    <div class="pin-keypad">
-      <button class="pin-key" data-k="1">1</button>
-      <button class="pin-key" data-k="2">2</button>
-      <button class="pin-key" data-k="3">3</button>
-      <button class="pin-key" data-k="4">4</button>
-      <button class="pin-key" data-k="5">5</button>
-      <button class="pin-key" data-k="6">6</button>
-      <button class="pin-key" data-k="7">7</button>
-      <button class="pin-key" data-k="8">8</button>
-      <button class="pin-key" data-k="9">9</button>
-      <button class="pin-key del" data-k="del">⌫</button>
-      <button class="pin-key" data-k="0">0</button>
-      <button class="pin-key del" data-k="clr">✕</button>
-    </div>
-    <button class="pin-cancel" id="pinCancel">Annulla</button>
-  </div>
-</div>
-
-<div id="printArea"></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, onValue, set, push, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8NCJf6E2o2baLJEeHFq6VgfbCMQuQkgw",
@@ -364,327 +429,171 @@ const firebaseConfig = {
   appId: "1:1029900577269:web:2fc8cf88fb9fa9703918bc"
 };
 
+const ROOMS = [
+  '130','14','15','16','18','20','21','22','23','24','25','26',
+  '28a','28b','29','30','31','32','33','34','35','36','37','38',
+  '39','40','41a','41b','42','43','44','45','46','47','48'
+];
+
+const DEFAULT_ROOM = { state: 'skip', checkout: false, dnd: false, night: false, urgent: false };
+
+const STATE_LABELS = {
+  skip:  'Non rifare',
+  todo:  'Da rifare',
+  sosta: 'In sosta',
+  clean: 'Riassettata'
+};
+
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
-const ROOMS_ORDER = [
-  '130','14','15','16','18','20','21','22','23','24',
-  '25','26','28a','28b','29','30','31','32','33','34',
-  '35','36','37','38','39','40','41a','41b','42','43',
-  '44','45','46','47','48'
-];
+let roomData = {};
+let editingRoom = null;
+let pending = { ...DEFAULT_ROOM };
 
-const EMPTY_ROOM = { state: 'inactive', priority: false, stay: false, dnd: false, night: false };
-let data = {};
-let currentRoom = null;
-let temp = { ...EMPTY_ROOM };
+function setSyncState(s, label) {
+  document.getElementById('syncDot').className = 'sync-dot ' + s;
+  document.getElementById('syncLabel').textContent = label;
+}
 
-/* ── CAMERE ── */
+setSyncState('syncing', 'Connessione...');
+
 onValue(ref(db, 'camere'), (snap) => {
-  data = snap.val() || {};
-  ROOMS_ORDER.forEach(r => { if (!data[r]) data[r] = { ...EMPTY_ROOM }; });
-  render();
+  const raw = snap.val() || {};
+  ROOMS.forEach(n => { roomData[n] = raw[n] ? { ...DEFAULT_ROOM, ...raw[n] } : { ...DEFAULT_ROOM }; });
+  renderGrid();
   renderStats();
-  document.getElementById('sync').innerText = '🟢 Sincronizzato';
+  setSyncState('online', 'Sincronizzato ' + new Date().toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'}));
+}, () => setSyncState('error', 'Errore connessione'));
+
+onValue(ref(db, 'note'), (snap) => {
+  const box = document.getElementById('notesBox');
+  if (document.activeElement !== box) box.value = snap.val() || '';
 });
 
-function render() {
+function renderGrid() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  ROOMS_ORDER.forEach(room => {
-    const d = data[room];
+  ROOMS.forEach(n => {
+    const d = roomData[n] || { ...DEFAULT_ROOM };
     const div = document.createElement('div');
-    div.className = 'room state-' + d.state;
-    if (d.priority) div.classList.add('priority');
-    if (d.stay)     div.classList.add('stay');
-    if (d.dnd)      div.classList.add('dnd');
-    if (d.night)    div.classList.add('night');
-    div.innerHTML = '<div class="room-number">' + room + '</div>';
-    div.onclick = () => openModal(room);
+
+    let cls = 'room s-' + d.state;
+    if (d.urgent)   cls += ' urgent';
+    if (d.checkout) cls += ' checkout';
+    if (d.dnd)      cls += ' dnd';
+    if (d.night)    cls += ' nightworker';
+
+    div.className = cls;
+    div.setAttribute('role', 'button');
+    div.setAttribute('aria-label', 'Camera ' + n);
+
+    div.innerHTML =
+      '<span class="room-num">' + n + '</span>' +
+      '<span class="room-tag">' + STATE_LABELS[d.state] + '</span>';
+
+    div.addEventListener('click', () => openModal(n));
     grid.appendChild(div);
   });
 }
 
 function renderStats() {
-  let todo = 0, ready = 0, stay = 0, priority = 0;
-  ROOMS_ORDER.forEach(r => {
-    const d = data[r];
-    if (d.state === 'todo')  todo++;
-    if (d.state === 'ready') ready++;
-    if (d.stay)     stay++;
-    if (d.priority) priority++;
+  const c = { skip:0, todo:0, sosta:0, clean:0, urgent:0, checkout:0, dnd:0, night:0 };
+  ROOMS.forEach(n => {
+    const d = roomData[n] || { ...DEFAULT_ROOM };
+    c[d.state]++;
+    if (d.urgent)   c.urgent++;
+    if (d.checkout) c.checkout++;
+    if (d.dnd)      c.dnd++;
+    if (d.night)    c.night++;
   });
-  document.getElementById('stats').innerHTML =
-    `🌸 Da rifare: ${todo} &nbsp; 🟢 Libere: ${ready} &nbsp; 🟫 Sosta: ${stay} &nbsp; 🔴 Priorità: ${priority}`;
-}
-
-/* ── MODAL CAMERA ── */
-function openModal(room) {
-  currentRoom = room;
-  temp = { ...EMPTY_ROOM, ...data[room] };
-  document.getElementById('modalTitle').innerText = 'Camera ' + room;
-  updateToggleUI();
-  document.getElementById('modalBg').classList.add('open');
-}
-function updateToggleUI() {
-  document.getElementById('priorityToggle').classList.toggle('active-red',   temp.priority);
-  document.getElementById('stayToggle').classList.toggle('active-brown', temp.stay);
-  document.getElementById('dndToggle').classList.toggle('active-dark',   temp.dnd);
-  document.getElementById('nightToggle').classList.toggle('active-star',  temp.night);
-}
-document.querySelectorAll('[data-state]').forEach(btn => {
-  btn.onclick = () => { temp.state = btn.dataset.state; };
-});
-document.getElementById('priorityToggle').onclick = () => { temp.priority = !temp.priority; updateToggleUI(); };
-document.getElementById('stayToggle').onclick     = () => { temp.stay     = !temp.stay;     updateToggleUI(); };
-document.getElementById('dndToggle').onclick      = () => { temp.dnd      = !temp.dnd;      updateToggleUI(); };
-document.getElementById('nightToggle').onclick    = () => { temp.night    = !temp.night;    updateToggleUI(); };
-document.getElementById('saveBtn').onclick = () => {
-  data[currentRoom] = temp;
-  set(ref(db, 'camere/' + currentRoom), temp);
-  render(); renderStats();
-  document.getElementById('modalBg').classList.remove('open');
-};
-document.getElementById('modalBg').onclick = (e) => {
-  if (e.target.id === 'modalBg') document.getElementById('modalBg').classList.remove('open');
-};
-
-/* ── PIN ── */
-const PIN_CORRECT = '88';
-let pinBuffer = '';
-let pinCallback = null;
-
-function openPin(label, callback) {
-  pinCallback = callback;
-  pinBuffer = '';
-  document.getElementById('pinAction').innerText = label;
-  document.getElementById('pinDisplay').textContent = '–';
-  document.getElementById('pinDisplay').classList.remove('error');
-  document.getElementById('pinBg').classList.add('open');
-}
-function closePinModal() {
-  document.getElementById('pinBg').classList.remove('open');
-  pinBuffer = '';
-  pinCallback = null;
-}
-function updatePinDisplay() {
-  const d = document.getElementById('pinDisplay');
-  d.textContent = pinBuffer.length ? '•'.repeat(pinBuffer.length) : '–';
-}
-document.querySelectorAll('.pin-key').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const k = btn.dataset.k;
-    if (k === 'del') { pinBuffer = pinBuffer.slice(0, -1); updatePinDisplay(); }
-    else if (k === 'clr') { pinBuffer = ''; updatePinDisplay(); }
-    else {
-      if (pinBuffer.length >= 4) return;
-      pinBuffer += k;
-      updatePinDisplay();
-      if (pinBuffer.length === PIN_CORRECT.length) {
-        if (pinBuffer === PIN_CORRECT) {
-          const cb = pinCallback;
-          closePinModal();
-          cb && cb();
-        } else {
-          const d = document.getElementById('pinDisplay');
-          d.textContent = '✕';
-          d.classList.add('error');
-          setTimeout(() => { pinBuffer = ''; d.textContent = '–'; d.classList.remove('error'); }, 800);
-        }
-      }
-    }
+  let html = '';
+  const items = [
+    { key:'todo',     color:'#5a9b1a', label:'Da rifare' },
+    { key:'sosta',    color:'#c47a00', label:'In sosta' },
+    { key:'clean',    color:'#2878cc', label:'Riassettate' },
+    { key:'skip',     color:'#aaa',    label:'Non rifare' },
+    { key:'urgent',   color:'#c0392b', label:'Urgenti' },
+    { key:'checkout', color:'#1a5fa8', label:'Checkout' },
+    { key:'dnd',      color:'#c0392b', label:'DND' },
+    { key:'night',    color:'#6a0dad', label:'Nott.' },
+  ];
+  items.forEach(i => {
+    if (c[i.key] > 0)
+      html += '<div class="stat"><div class="stat-dot" style="background:' + i.color + '"></div>' + i.label + ': <strong>' + c[i.key] + '</strong></div>';
   });
-});
-document.getElementById('pinCancel').onclick = closePinModal;
+  document.getElementById('stats').innerHTML = html;
+}
 
-/* ── RESET CAMERE ── */
-document.getElementById('resetBtn').onclick = () => openPin('Reset camere → tutto grigio', () => {
-  const resetAll = {};
-  ROOMS_ORDER.forEach(r => { resetAll[r] = { ...EMPTY_ROOM }; });
-  set(ref(db, 'camere'), resetAll);
-});
+function openModal(n) {
+  editingRoom = n;
+  pending = { ...DEFAULT_ROOM, ...roomData[n] };
+  document.getElementById('modalTitle').textContent = 'Camera ' + n;
+  updateModalUI();
+  document.getElementById('modalOverlay').classList.add('open');
+}
 
-/* ── RESET CHAT ── */
-document.getElementById('chatResetBtn').onclick = () => openPin('Svuota chat', () => {
-  remove(ref(db, 'chat'));
-});
+function updateModalUI() {
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.state === pending.state);
+  });
 
-/* ── NOTE RECEPTION ── */
-onValue(ref(db, 'note_reception'), (snap) => {
-  const box = document.getElementById('noteTextarea');
-  if (document.activeElement !== box) box.value = snap.val() || '';
-});
-document.getElementById('noteSaveBtn').onclick = () => {
-  set(ref(db, 'note_reception'), document.getElementById('noteTextarea').value);
-  document.getElementById('noteStatus').textContent = '✓ Salvato';
-  setTimeout(() => document.getElementById('noteStatus').textContent = '', 2000);
-};
-document.getElementById('noteTextarea').addEventListener('input', () => {
-  document.getElementById('noteStatus').textContent = 'Non salvato';
-});
-document.getElementById('noteClearBtn').onclick = () => openPin('Cancella note reception', () => {
-  set(ref(db, 'note_reception'), '');
-  document.getElementById('noteTextarea').value = '';
-  document.getElementById('noteStatus').textContent = '';
-});
+  const toggles = [
+    { row: 'checkoutRow', toggle: 'checkoutToggle', key: 'checkout', cls: 'on-blue', trCls: 'tr-checkout' },
+    { row: 'dndRow',      toggle: 'dndToggle',      key: 'dnd',      cls: 'on-red',  trCls: 'tr-dnd' },
+    { row: 'nightRow',    toggle: 'nightToggle',     key: 'night',    cls: 'on-purple', trCls: 'tr-night' },
+    { row: 'urgentRow',   toggle: 'urgentToggle',    key: 'urgent',   cls: 'on-red',  trCls: 'tr-urgent' },
+  ];
 
-/* ── MANUTENZIONE ── */
-let maintData = {};
-
-onValue(ref(db, 'manutenzione'), (snap) => {
-  maintData = snap.val() || {};
-  renderMaint();
-});
-
-function renderMaint() {
-  const list = document.getElementById('maintList');
-  const items = Object.entries(maintData)
-    .filter(([, item]) => !item.risolto)
-    .sort((a,b) => (a[1].ts||0) - (b[1].ts||0));
-  if (!items.length) {
-    list.innerHTML = '<div class="maint-empty">Nessuna segnalazione aperta.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  items.forEach(([key, item]) => {
-    const div = document.createElement('div');
-    div.className = 'maint-item';
-    const time = item.ts ? new Date(item.ts).toLocaleString('it-IT', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '';
-    div.innerHTML = `
-      <div>
-        <div class="maint-item-text">${item.text}</div>
-        <div class="maint-item-meta">🕐 ${time}</div>
-      </div>
-      <button class="maint-resolve-btn" data-key="${key}">✓ Risolto</button>
-    `;
-    div.querySelector('.maint-resolve-btn').onclick = () => {
-      openPin('Segna come risolto', () => {
-        set(ref(db, 'manutenzione/' + key), {
-          ...item,
-          risolto: true,
-          ts_risolto: Date.now()
-        });
-      });
-    };
-    list.appendChild(div);
+  toggles.forEach(t => {
+    const row = document.getElementById(t.row);
+    const tog = document.getElementById(t.toggle);
+    const on = pending[t.key];
+    row.classList.toggle('selected', on);
+    tog.className = 'toggle-switch' + (on ? ' ' + t.cls : '');
   });
 }
 
-function sendMaint() {
-  const input = document.getElementById('maintInput');
-  const text = input.value.trim();
-  if (!text) return;
-  push(ref(db, 'manutenzione'), { text, ts: Date.now() });
-  input.value = '';
-  input.style.height = 'auto';
-}
-document.getElementById('maintSendBtn').onclick = sendMaint;
-document.getElementById('maintInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMaint(); }
-});
-document.getElementById('maintInput').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+document.querySelectorAll('.opt-btn').forEach(b => {
+  b.addEventListener('click', () => { pending.state = b.dataset.state; updateModalUI(); });
 });
 
-/* ── STAMPA ── */
-document.getElementById('printBtn').onclick = () => openPin('Stampa report pulizie', () => {
-  stampaReport();
-});
-
-function stampaReport() {
-  const COLS = 10;
-  const RIGHE_NUMERI = 4;
-  const daRifare = ROOMS_ORDER.filter(r => {
-    const d = data[r];
-    return d.state === 'todo' || d.state === 'ready';
+[
+  ['checkoutRow', 'checkout'],
+  ['dndRow',      'dnd'],
+  ['nightRow',    'night'],
+  ['urgentRow',   'urgent'],
+].forEach(([id, key]) => {
+  document.getElementById(id).addEventListener('click', () => {
+    pending[key] = !pending[key];
+    updateModalUI();
   });
-  const oggi = new Date().toLocaleDateString('it-IT', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
-  const oraStampa = new Date().toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
-  const slots = [];
-  for (let i = 0; i < RIGHE_NUMERI * COLS; i++) slots.push(i < daRifare.length ? daRifare[i] : null);
-  let righeHtml = '';
-  for (let riga = 0; riga < RIGHE_NUMERI; riga++) {
-    const blocco = slots.slice(riga * COLS, (riga + 1) * COLS);
-    let rigaNum = '<tr>';
-    blocco.forEach(r => {
-      if (!r) {
-        rigaNum += `<td style="border:1.5px solid #000;width:10%;height:38px;"></td>`;
-      } else {
-        const d = data[r];
-        const priority = d.priority ? `<span style="color:red;font-size:10px;position:absolute;top:1px;right:2px;">●</span>` : '';
-        const dnd = d.dnd   ? `<span style="font-size:9px;position:absolute;bottom:1px;right:2px;">🚫</span>` : '';
-        const nw  = d.night ? `<span style="font-size:9px;position:absolute;bottom:1px;left:2px;">⭐</span>` : '';
-        const innerStyle = d.stay
-          ? `display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:2px solid #000;border-radius:50%;font-size:13px;font-weight:900;`
-          : `font-size:16px;font-weight:900;`;
-        rigaNum += `<td style="border:1.5px solid #000;width:10%;height:38px;text-align:center;vertical-align:middle;position:relative;padding:1px;">${priority}<span style="${innerStyle}">${r}</span>${dnd}${nw}</td>`;
-      }
-    });
-    rigaNum += '</tr>';
-    let rigaSpunta = '<tr>';
-    for (let j = 0; j < COLS; j++) rigaSpunta += `<td style="border:1.5px solid #000;height:20px;"></td>`;
-    rigaSpunta += '</tr>';
-    righeHtml += rigaNum + rigaSpunta;
-  }
-  const html = `
-    <div style="font-family:Arial,sans-serif;padding:6px 10px;max-height:90mm;overflow:hidden;">
-      <table style="width:100%;border-collapse:collapse;margin-bottom:6px;">
-        <tr>
-          <td style="font-size:13px;font-weight:900;letter-spacing:0.5px;">SCHEDA PULIZIE CAMERE</td>
-          <td style="text-align:right;font-size:12px;">Giorno: <strong>${oggi}</strong> <span style="font-size:10px;color:#888;">(${oraStampa})</span></td>
-        </tr>
-      </table>
-      <table style="width:100%;border-collapse:collapse;table-layout:fixed;">${righeHtml}</table>
-      <div style="margin-top:5px;font-size:10px;border-top:1px solid #000;padding-top:4px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
-        <span><strong>Totale: ${daRifare.length}</strong></span>
-        <span>Numero <span style="border:1px solid #000;border-radius:50%;padding:0px 4px;font-size:9px;">cerchiato</span> = Sosta</span>
-        <span><span style="color:red;">●</span> = Priorità &nbsp; 🚫 = DND &nbsp; ⭐ = Nott.</span>
-      </div>
-    </div>`;
-  const area = document.getElementById('printArea');
-  area.innerHTML = html;
-  area.style.display = 'block';
-  window.print();
-  area.style.display = 'none';
-}
-
-/* ── CHAT ── */
-const SENDER_LABELS = { reception: '📋 Reception', cleaning: '🧹 Pulizie', other: '👤 Altro' };
-onValue(ref(db, 'chat'), (snap) => {
-  const msgs = snap.val();
-  const container = document.getElementById('chatMessages');
-  container.innerHTML = '';
-  if (!msgs) { container.innerHTML = '<span class="chat-empty">Nessun messaggio ancora.</span>'; return; }
-  const list = Object.values(msgs).sort((a, b) => (a.ts || 0) - (b.ts || 0));
-  list.forEach(msg => {
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble from-' + (msg.sender || 'other');
-    const time = msg.ts ? new Date(msg.ts).toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' }) : '';
-    bubble.innerHTML = `<span>${msg.text}</span><span class="bubble-meta">${SENDER_LABELS[msg.sender] || '👤'} · ${time}</span>`;
-    container.appendChild(bubble);
-  });
-  container.scrollTop = container.scrollHeight;
-});
-function sendChatMessage() {
-  const input = document.getElementById('chatInput');
-  const sender = document.getElementById('senderSelect').value;
-  const text = input.value.trim();
-  if (!text) return;
-  push(ref(db, 'chat'), { text, sender, ts: Date.now() });
-  input.value = '';
-  input.style.height = 'auto';
-}
-document.getElementById('chatSendBtn').onclick = sendChatMessage;
-document.getElementById('chatInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
-});
-document.getElementById('chatInput').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js');
+document.getElementById('modalConfirm').addEventListener('click', () => {
+  if (!editingRoom) return;
+  roomData[editingRoom] = { ...pending };
+  set(ref(db, 'camere/' + editingRoom), { ...pending });
+  setSyncState('syncing', 'Salvataggio...');
+  renderGrid();
+  renderStats();
+  document.getElementById('modalOverlay').classList.remove('open');
+});
+
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+});
+
+document.getElementById('notesSave').addEventListener('click', () => {
+  set(ref(db, 'note'), document.getElementById('notesBox').value);
+  document.getElementById('notesStatus').textContent = 'Salvato ✓';
+  setTimeout(() => document.getElementById('notesStatus').textContent = '', 2500);
+});
+
+document.getElementById('notesBox').addEventListener('input', () => {
+  document.getElementById('notesStatus').textContent = 'Non salvato';
+});
 </script>
 </body>
 </html>
